@@ -307,7 +307,7 @@
             <template #header="{ titleId, titleClass }">
                 <div class="configHeader">
                     <h4 :id="titleId" :class="titleClass" class="titleLine">
-                        <span class="titleText">更多配置</span>
+                        <span class="titleText">{{ t('moreConfig') }}</span>
                         <el-icon class="switchIcon" @click="isJson = !isJson">
                             <Switch />
                         </el-icon>
@@ -373,6 +373,17 @@ const appRules = reactive<FormRules>({
             message: t('inputWebPlaceholder'),
             trigger: 'change',
         },
+        {
+            validator: (rule, value, callback) => {
+                // check url start with http or https
+                if (value.startsWith('http')) {
+                    callback()
+                } else {
+                    callback(new Error(t('urlInvalid')))
+                }
+            },
+            trigger: 'blur',
+        },
     ],
     showName: [
         {
@@ -387,6 +398,17 @@ const appRules = reactive<FormRules>({
             message: t('inputAppIdPlaceholder'),
             trigger: 'change',
         },
+        {
+            validator: (rule, value, callback) => {
+                // check appid must be alphanumeric and dot
+                if (/^[a-zA-Z0-9.]+$/.test(value)) {
+                    callback()
+                } else {
+                    callback(new Error(t('appIdInvalid')))
+                }
+            },
+            trigger: 'blur',
+        },
     ],
     icon: [
         {
@@ -400,6 +422,17 @@ const appRules = reactive<FormRules>({
             required: true,
             message: t('inputAppVersionPlaceholder'),
             trigger: 'change',
+        },
+        {
+            validator: (rule, value, callback) => {
+                const versionPattern = /^\d+\.\d+\.\d+$/ // 匹配如 1.8.8 或 1.9.23
+                if (!versionPattern.test(value)) {
+                    callback(new Error(t('versionSemVer')))
+                } else {
+                    callback()
+                }
+            },
+            trigger: 'blur',
         },
     ],
     platform: [
@@ -1190,6 +1223,16 @@ const dispatchAction = async () => {
     }, 10000)
 }
 
+// create issue
+const createIssue = async (url: string) => {
+    const issueRes: any = await githubApi.createIssue({
+        body: `编译出错：${url}`,
+        labels: ['failure'],
+        title: `${store.currentProject.name}编译出错`,
+    })
+    console.log('issueRes---', issueRes)
+}
+
 // check build workflow status
 const checkBuildStatus = async () => {
     const checkRes: any = await githubApi.getWorkflowRuns(
@@ -1226,6 +1269,7 @@ const checkBuildStatus = async () => {
         } else if (status === 'failure') {
             buildLoading.value = false
             buildTime = 0
+            createIssue(html_url)
             openUrl(html_url)
             document.querySelector('.el-loading-text')!.innerHTML = t('failure')
             buildSecondTimer && clearInterval(buildSecondTimer)
@@ -1233,6 +1277,7 @@ const checkBuildStatus = async () => {
         } else if (conclusion === 'failure') {
             buildLoading.value = false
             buildTime = 0
+            createIssue(html_url)
             openUrl(html_url)
             document.querySelector('.el-loading-text')!.innerHTML = t('failure')
             buildSecondTimer && clearInterval(buildSecondTimer)
@@ -1240,6 +1285,7 @@ const checkBuildStatus = async () => {
         } else if (status === 'completed') {
             buildLoading.value = false
             buildTime = 0
+            createIssue(html_url)
             openUrl(html_url)
             buildSecondTimer && clearInterval(buildSecondTimer)
             checkDispatchTimer && clearInterval(checkDispatchTimer)
@@ -1324,10 +1370,10 @@ onMounted(async () => {
         -moz-user-select: none; /* Firefox */
         -ms-user-select: none; /* IE10+/Edge */
         user-select: none; /* Standard syntax */
-        cursor: default;
 
         .titleText {
             margin-right: 4px;
+            cursor: default;
         }
 
         .switchIcon {
