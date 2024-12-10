@@ -134,13 +134,16 @@ pnpm run dev
 pnpm run build
 ```
 
-## Support
+<!-- ## Support
 
 1. If PakePlus has brought joy to your life, feel free to support it.
  <p align="center">
          <img src="./docs/pay.png" />
- </p>
+ </p> -->
 
 ## TODO
 
 1. add auto update feature
+2. support build android apk and build ios ipa
+3. add upload front build dist to build
+4.
