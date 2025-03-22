@@ -1,6 +1,6 @@
 [package]
 name = "shuhu"
-version = "0.0.3"
+version = "0.0.4"
 description = "https://juejin.cn/"
 authors = ["1024xiaoshen"]
 edition = "2021"
