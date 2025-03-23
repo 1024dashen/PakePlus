@@ -84,7 +84,7 @@ jobs:
               with:
                   tagName: 'meimei'
                   releaseName: 'meimei v__VERSION__'
-                  releaseBody: 'https://www.bilibili.com/'
+                  releaseBody: '2'
                   releaseDraft: false
                   prerelease: false
                   publish: true
