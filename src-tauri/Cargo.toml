@@ -1,6 +1,6 @@
 [package]
 name = "meimei"
-version = "0.0.2"
+version = "0.0.3"
 description = ""
 authors = ["1024xiaoshen"]
 edition = "2021"
