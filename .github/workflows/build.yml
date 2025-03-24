@@ -84,7 +84,7 @@ jobs:
               with:
                   tagName: 'jujin'
                   releaseName: 'jujin v__VERSION__'
-                  releaseBody: 'https://juejin.cn/'
+                  releaseBody: '2'
                   releaseDraft: false
                   prerelease: false
                   publish: true
