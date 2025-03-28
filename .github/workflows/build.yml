@@ -84,7 +84,7 @@ jobs:
               with:
                   tagName: 'nihao'
                   releaseName: 'nihao v__VERSION__'
-                  releaseBody: 'https://juejin.cn/'
+                  releaseBody: 'https://github.com/'
                   releaseDraft: false
                   prerelease: false
                   publish: true
