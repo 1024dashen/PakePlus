@@ -1,26 +1,22 @@
 {
     "$schema": "https://schema.tauri.app/config/2",
-    "productName": "PakePlus",
-    "version": "0.1.0",
-    "identifier": "com.pakeplus.app",
-    "build": {
-        "frontendDist": "../src"
-    },
+    "productName": "pws",
+    "version": "0.0.1",
+    "identifier": "com.pws.app",
+    "build": {"frontendDist": "../src"},
     "app": {
-        "withGlobalTauri": true,
         "security": {
+            "csp": null,
+            "dangerousDisableAssetCspModification": true,
             "assetProtocol": {
                 "enable": true,
                 "scope": {
-                    "allow": [
-                        "$APPDATA/assets/**",
-                        "$APPDATA/**",
-                        "$DOWNLOAD/*"
-                    ]
+                    "allow": ["**/*"],
+                    "requireLiteralLeadingDot": false
                 }
-            },
-            "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost blob: data: http://asset.localhost; font-src 'self' asset: http//localhost data:;"
-        }
+            }
+        },
+        "withGlobalTauri": false
     },
     "bundle": {
         "active": true,
