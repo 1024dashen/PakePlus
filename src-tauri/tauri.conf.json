@@ -1,13 +1,10 @@
 {
     "$schema": "https://schema.tauri.app/config/2",
-    "productName": "PakePlus",
-    "version": "0.1.0",
-    "identifier": "com.pakeplus.app",
-    "build": {
-        "frontendDist": "../src"
-    },
+    "productName": "Pkad",
+    "version": "0.0.1",
+    "identifier": "com.Pkad.app",
+    "build": {"frontendDist": "../src"},
     "app": {
-        "withGlobalTauri": true,
         "security": {
             "csp": null,
             "dangerousDisableAssetCspModification": true,
@@ -18,7 +15,8 @@
                     "requireLiteralLeadingDot": false
                 }
             }
-        }
+        },
+        "withGlobalTauri": false
     },
     "bundle": {
         "active": true,
