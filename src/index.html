@@ -2,21 +2,48 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
+        <meta
+            http-equiv="Cache-Control"
+            content="no-cache, no-store, must-revalidate"
+        />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="telephone=no" name="format-detection" />
+        <link rel="apple-touch-icon" href="./assets/Square284x284Logo.png" />
+        <link rel="manifest" href="./manifest.json" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <link rel="shortcut icon" href="./assets/icon.ico" />
+        <title>bilibili</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+            }
+
+            iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+        </style>
     </head>
-
     <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
-
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit">Greet</button>
-            </form>
-            <p id="greet-msg"></p>
-        </main>
+        <iframe
+            title="bilibili"
+            id="iframe"
+            width="100%"
+            height="100%"
+            src="https://www.bilibili.com"
+        ></iframe>
+        <!-- 会导致安装到桌面上之后，icon都是一样的 -->
+        <div style="display: none">PUBLISHTIME</div>
     </body>
 </html>
