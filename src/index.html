@@ -1,22 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级随机点名系统</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .result {
+            font-size: 36px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 2px dashed #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .student-list {
+            margin-top: 30px;
+            text-align: left;
+            columns: 3;
+            column-gap: 20px;
+        }
+        .student-list div {
+            margin-bottom: 8px;
+            break-inside: avoid;
+        }
+        .selected {
+            color: red;
+            font-weight: bold;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        .speed-control {
+            margin-top: 20px;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>班级随机点名系统</h1>
+        <div class="controls">
+            <button id="startBtn">开始点名</button>
+            <button id="stopBtn" disabled>停止</button>
+        </div>
+        <div class="speed-control">
+            <label for="speed">速度:</label>
+            <input type="range" id="speed" min="50" max="500" value="200">
+        </div>
+        <div class="result" id="result">准备开始...</div>
+        
+        <h2>班级名单 (30人)</h2>
+        <div class="student-list" id="studentList"></div>
+    </div>
 
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
-
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit">Greet</button>
-            </form>
-            <p id="greet-msg"></p>
-        </main>
-    </body>
+    <script>
+        // 初始化学生名单 - 这里用"学生1"到"学生30"表示，实际使用时可以替换为真实姓名
+        const students = [];
+        for (let i = 1; i <= 30; i++) {
+            students.push(`学生${i}`);
+        }
+        
+        // 或者取消上面的循环，手动输入学生姓名：
+        // const students = ["张三", "李四", "王五", ... ];
+        
+        let timer = null;
+        let currentIndex = 0;
+        let isRunning = false;
+        
+        // 获取DOM元素
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resultDiv = document.getElementById('result');
+        const studentListDiv = document.getElementById('studentList');
+        const speedControl = document.getElementById('speed');
+        
+        // 渲染学生名单
+        function renderStudentList() {
+            studentListDiv.innerHTML = '';
+            students.forEach((student, index) => {
+                const studentDiv = document.createElement('div');
+                studentDiv.textContent = student;
+                studentDiv.id = `student-${index}`;
+                studentListDiv.appendChild(studentDiv);
+            });
+        }
+        
+        // 高亮被选中的学生
+        function highlightStudent(index) {
+            // 移除之前的高亮
+            const previousHighlighted = document.querySelector('.selected');
+            if (previousHighlighted) {
+                previousHighlighted.classList.remove('selected');
+            }
+            
+            // 添加新的高亮
+            if (index !== null && index >= 0 && index < students.length) {
+                const studentElement = document.getElementById(`student-${index}`);
+                if (studentElement) {
+                    studentElement.classList.add('selected');
+                    // 滚动到可见区域
+                    studentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        }
+        
+        // 随机选择学生
+        function selectRandomStudent() {
+            currentIndex = Math.floor(Math.random() * students.length);
+            resultDiv.textContent = students[currentIndex];
+            highlightStudent(currentIndex);
+        }
+        
+        // 开始随机点名
+        function startRandomSelection() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            resultDiv.textContent = "随机选择中...";
+            
+            const speed = parseInt(speedControl.value);
+            timer = setInterval(selectRandomStudent, speed);
+        }
+        
+        // 停止随机点名
+        function stopRandomSelection() {
+            if (!isRunning) return;
+            
+            clearInterval(timer);
+            isRunning = false;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            
+            if (students.length > 0) {
+                resultDiv.textContent = `选中: ${students[currentIndex]}`;
+                highlightStudent(currentIndex);
+            }
+        }
+        
+        // 事件监听
+        startBtn.addEventListener('click', startRandomSelection);
+        stopBtn.addEventListener('click', stopRandomSelection);
+        speedControl.addEventListener('input', function() {
+            if (isRunning) {
+                clearInterval(timer);
+                timer = setInterval(selectRandomStudent, parseInt(this.value));
+            }
+        });
+        
+        // 初始化页面
+        renderStudentList();
+    </script>
+</body>
 </html>
