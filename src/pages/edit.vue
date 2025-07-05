@@ -1595,43 +1595,50 @@ const easyLocal = async () => {
         } else {
             await mkdir(appDataDirPath, { recursive: true })
         }
-        // ico save to local
-        const base64String = store.currentProject.iconRound
-            ? roundIcon.value
-            : iconBase64.value
-        const icoBlob = await base64PngToIco(base64String)
-        const icoPath = await join(appDataDirPath, 'app.ico')
-        await writeFile(icoPath, icoBlob)
         // save rhscript.txt
         const rhscript = await readStaticFile('rhscript.txt')
         // replace ppexe path
         const ppexePath: string = await invoke('get_exe_dir', { parent: false })
         // log path
         const logPath: string = await join(appDataDirPath, 'rh.log')
-        const rhtarget = rhscript
+        let rhtarget: string = rhscript
             .replace('PakePlus.exe', ppexePath)
             .replace('Target.exe', targetExe)
             .replace('rh.log', logPath)
-            .replace('app.ico', icoPath)
+        // ico save to local
+        if (iconBase64.value) {
+            const base64String = store.currentProject.iconRound
+                ? roundIcon.value
+                : iconBase64.value
+            const icoBlob = await base64PngToIco(base64String)
+            const icoPath = await join(appDataDirPath, 'app.ico')
+            await writeFile(icoPath, icoBlob)
+            rhtarget = rhtarget.replace('app.ico', icoPath)
+        } else {
+            rhtarget = rhtarget.split('[COMMANDS]')[0]
+        }
         const rhscriptPath = await join(appDataDirPath, 'rhscript.txt')
         await writeTextFile(rhscriptPath, rhtarget)
     } else {
         targetName = store.currentProject.showName
     }
     // build local
+    console.log('store.currentProject.more.windows', store.currentProject.name)
     // store.currentProject.isHtml && store.currentProject.htmlPath
     invoke('build_local', {
         targetDir: targetDir,
+        projectName: store.currentProject.name,
         exeName: targetName,
         config: store.currentProject.more.windows,
-        base64Png:
-            platformName === 'windows'
+        base64Png: iconBase64.value
+            ? platformName === 'windows'
                 ? store.currentProject.iconRound
                     ? roundIcon.value
                     : iconBase64.value
                 : store.currentProject.iconRound
                 ? await cropImageToRound(roundIcon.value, 50)
-                : iconBase64.value,
+                : iconBase64.value
+            : '',
         debug: store.currentProject.desktop.debug,
         customJs: await getInitializationScript(true),
         htmlPath: store.currentProject.htmlPath,
